@@ -2,7 +2,6 @@ import glob
 import os
 import numpy as np
 import scipy as sc
-from skimage.io import imread
 from skimage.transform import resize
 from skimage import morphology
 from skimage import measure
@@ -91,7 +90,7 @@ def load(test = False):
                 #print fileName
                 #f = plt.figure(figsize=(8,2))
                 image_file = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
-                image = imread(image_file)
+                image = sc.misc.imread(image_file)
                 #sub1 = plt.subplot(1, 4, 1)
                 #sub1.set_title('Original')                
                 #plt.imshow(image_copy, cmap=cm.gray)

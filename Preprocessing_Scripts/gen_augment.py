@@ -2,7 +2,6 @@ import glob
 import os
 import numpy as np
 import scipy as sc
-from skimage.io import imread
 from skimage.transform import AffineTransform
 from skimage.transform import SimilarityTransform
 from skimage.transform import warp
@@ -56,7 +55,7 @@ def transform():
                 print fileName
                 #f = plt.figure(figsize=(8,2))
                 image_file = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
-                image = imread(image_file)
+                image = sc.misc.imread(image_file)
 
                 X_path_label.append(folder + '/' + fileName + ' ' + str(current_class_id))                                
 
