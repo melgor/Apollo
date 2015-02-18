@@ -11,13 +11,13 @@ import cPickle as pickle
 ###############################################################################
 
 # Training set directory where 96x96 images are present (using gen_train.py)
-FTRAIN = '../../train_temp'
+FTRAIN = 'train_96x96'
 # Test set directory where 96x96 images are present (using gen_test.py)
-FTEST = '../../test_temp'
+FTEST = 'test_96x96'
 # Output directory for preprocessed training images
-FOUT_TRAIN = '../../train_preprocessed'
+FOUT_TRAIN = 'train_96x96'
 # Output directory for preprocessed test images
-FOUT_TEST = '../../test_preprocessed'
+FOUT_TEST = 'test_96x96'
 # Pixel size for final image
 MAX_IMAGE_PIXEL = 96
 IMAGE_SIZE = MAX_IMAGE_PIXEL * MAX_IMAGE_PIXEL
@@ -73,9 +73,9 @@ def load(test = False):
         n_classes += 1
     
     #X = np.zeros((n_images * NUM_PATCH, PATCH_SIZE))
-    X = np.zeros((n_images, IMAGE_SIZE))
+    #X = np.zeros((n_images, IMAGE_SIZE))
     #y = np.zeros((n_images * NUM_PATCH))
-    Y = np.zeros(n_images)
+    #Y = np.zeros(n_images)
     image_idx = 0
     current_class_id = 0
     
@@ -126,7 +126,7 @@ def load(test = False):
                 #plt.imshow(image, cmap=cm.gray)
 
 
-                X[image_idx] = np.reshape(image, (1, IMAGE_SIZE))
+                #X[image_idx] = np.reshape(image, (1, IMAGE_SIZE))
                 #patch = view_as_blocks(image, block_shape = (MAX_PATCH_PIXEL, MAX_PATCH_PIXEL))
                 #
                 #patch_idx = 0
@@ -138,7 +138,7 @@ def load(test = False):
                 #        patch_idx += 1
 
                 #y[image_idx:image_idx + NUM_PATCH] = current_class_id
-                Y[image_idx] = current_class_id
+                #Y[image_idx] = current_class_id
                 #image_idx += NUM_PATCH
                 image_idx += 1
                 
@@ -153,7 +153,7 @@ def load(test = False):
                     
         current_class_id += 1
                 
-    return n_images, n_classes, directory_names, classes, X, Y
+    return n_images, n_classes, directory_names, classes#, X, Y
 
 
 ###############################################################################

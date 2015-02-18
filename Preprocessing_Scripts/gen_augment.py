@@ -11,9 +11,9 @@ from sklearn.cross_validation import train_test_split
 ###############################################################################
 
 # Training set directory where 96x96 images are present (using gen_train.py)
-FTRAIN = '../../train_temp'
+FTRAIN = 'train_96x96'
 # File list directory
-FLIST = '../Data_Set'
+FLIST = '../Apollo/Data_Set'
 # Pixel size for final image
 MAX_IMAGE_PIXEL = 96
 IMAGE_SIZE = MAX_IMAGE_PIXEL * MAX_IMAGE_PIXEL
