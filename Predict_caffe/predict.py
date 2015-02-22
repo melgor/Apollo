@@ -1,7 +1,9 @@
 import numpy as np
-import cv2,os,sys
+import cv2
+import os
 # Make sure that caffe is on the python path:
 caffe_root = '/home/blcv/LIB/caffe/'  # this file is expected to be in {caffe_root}/examples
+import sys
 sys.path.insert(0, caffe_root + 'python')
 import caffe
 
@@ -17,7 +19,7 @@ class Prediction(object):
     self.net = caffe.Classifier (MODEL_FILE,PRETRAINED,
               mean=np.load('mean_file.npy'),
               mean_mode = 'elementwise',
-              raw_scale=255,
+              raw_scale= 255,
               image_dims=(96, 96),
               gpu=True)
               
