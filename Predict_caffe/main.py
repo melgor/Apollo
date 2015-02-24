@@ -131,17 +131,18 @@ def prob_image(args):
   pred = Prediction(args.proto_path,args.bin_path)
   max_value = 512 
   curr_value = 0
-  with open(args.mapper) as data_file:    
-    maper = json.load(data_file)
-    
-  good_list = list()
-  for i in range(121):
-    key_value  = 0
-    for key,elem in maper.iteritems():
-      if i == elem:
-        key_value =  key
-        break
-    good_list.append(int(key))
+  if args.mapper != None:
+    with open(args.mapper) as data_file:    
+      maper = json.load(data_file)
+      
+    good_list = list()
+    for i in range(121):
+      key_value  = 0
+      for key,elem in maper.iteritems():
+        if i == elem:
+          key_value =  key
+          break
+      good_list.append(int(key))
 
 
   with open(args.images,'r') as file_image:
@@ -156,7 +157,10 @@ def prob_image(args):
       else:
         #predict using value
         predictions = pred.predict_multi(list_images)
-        pred_good = predictions[:,good_list]
+        if args.mapper != None:
+          pred_good = predictions[:,good_list]
+        else:
+          pred_good = predictions
         list_images = list()
         list_good_class = list()
         curr_value = 0
@@ -166,7 +170,10 @@ def prob_image(args):
     if len(list_images) > 0:
       #predict using value
       predictions = pred.predict_multi(list_images)
-      pred_good = predictions[:,good_list]
+      if args.mapper != None:
+         pred_good = predictions[:,good_list]
+      else:
+         pred_good = predictions
       list_predictions.append(pred_good)
   
   all_pred = np.vstack(list_predictions)
