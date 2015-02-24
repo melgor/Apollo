@@ -29,6 +29,7 @@ def transform():
     Tranform images in training set
     """
     X_train = list()
+    X_val = list()
     directory_names = list(set(glob.glob(os.path.join(FTRAIN, "*"))).difference(set(glob.glob(os.path.join(FTRAIN,"*.*")))))
 
     n_images = 0
@@ -75,6 +76,7 @@ def transform():
                 if (folder + '/' + fileName) in X_train_files:
                     X_train.append(folder + '/' + fileName + ' ' + str(current_class_id))
                 else:
+                    X_val.append(folder + '/' + fileName + ' ' + str(current_class_id))
                     continue
                 
                 # ======================
@@ -249,7 +251,7 @@ def transform():
 
         current_class_id += 1
         
-    return X_train, X_train_files, X_val_files, files, classes
+    return X_train, X_val, X_train_files, X_val_files, files, classes
 
 ###############################################################################
 
@@ -257,7 +259,7 @@ def transform():
 print "========================"
 print "Applying transformations"
 print "========================"
-X_train, X_train_files, X_val_files, files, classes = transform()
+X_train, X_val,X_train_files, X_val_files, files, classes = transform()
 print ""
 
 # Shuffle training and validation lists
@@ -265,7 +267,7 @@ print "==================="
 print "Shuffling data sets"
 print "==================="
 X_train = shuffle(X_train, random_state = 0)
-X_val = shuffle(X_val_files, random_state = 0)
+X_val = shuffle(X_val, random_state = 0)
 print ""
 
 # Write train.txt
