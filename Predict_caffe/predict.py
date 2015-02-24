@@ -18,7 +18,6 @@ class Prediction(object):
 
     self.net = caffe.Classifier (MODEL_FILE,PRETRAINED,
               mean=np.load('mean_file.npy'),
-              mean_mode = 'elementwise',
               raw_scale= 255,
               image_dims=(96, 96),
               gpu=True)

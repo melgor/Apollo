@@ -12,6 +12,14 @@ To run it, firstly you need:
  3. Create mean_file.npy, should be place in same folder like main. Do it by:
   python bin_to_np.py dim_image_mean path_to_mean_caffe name_output
 
+The main.py is used for prediction and it has following arguments:
+  - images       : path to file with pathes to images ex. produced by augmented script
+  - proto_path   : path to deploy file for Caffe model
+  - bin_path     : path to caffe model
+  - mapper       : file for creating mapping between our labels and Kaggle (Optional)
+  - extract_prob : use model for extracting probabilities from images for each sample. Save it as csv file
+  
+  
 For running caffe model for prediction or creating submission:
  1. Run prediction using main. There are two ways of use it: test accuracy/loss or extract    probalibities for Kaggle (Filter Vizualization need more changes). For testing file you need ti run:
   ./main.py --images path_to_file  --proto_path path_to_deploy --bin_path path_to_binary_model
