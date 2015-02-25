@@ -13,9 +13,9 @@ import cPickle as pickle
 ###############################################################################
 
 # Training set directory where 96x96 images are present (using gen_train.py)
-FTRAIN = '/home/blcv/CODE/Plancton/Test_96/train_aug_all/'
+FTRAIN = '/home/blcv/drive_1TB/Documents/Images/train_random_plancton/'
 # File list directory
-FLIST = '/home/blcv/CODE/Plancton/Test_96/train_aug_all/'
+FLIST = '/home/blcv/drive_1TB/Documents/Images/train_random_plancton/'
 # File prefix
 FPREFIX = 'train_96x96_aug_'
 # Pixel size for final image
@@ -54,202 +54,220 @@ def transform():
     # Validation set must be completely independent of the training set
     X_train_files, X_val_files = train_test_split(files, test_size = 0.1, random_state = 0)
     
-    current_class_id = 0
     
-    for folder in directory_names:
-        current_class = folder.split(os.sep)[-1]
-        print "Reading: " + current_class + " (" + str(current_class_id) + ")"
-        classes.append(current_class)
-        for fileNameDir in os.walk(folder):
-            for fileName in fileNameDir[2]:
-                if fileName[-4:] != ".jpg":
-                    continue
-                #print fileName
-                
-                image_file = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
-                
-                # ===================================
-                # The original file, no modifications
-                # ===================================
-                image = sc.misc.imread(image_file)
-                
-                if (folder + '/' + fileName) in X_train_files:
-                    X_train.append(folder + '/' + fileName + ' ' + str(current_class_id))
-                else:
-                    X_val.append(folder + '/' + fileName + ' ' + str(current_class_id))
-                    continue
-                
-                # ======================
-                # Scale 1 original image
-                # ======================
-                similarity_transform = SimilarityTransform(scale = 0.75)
-                image_scaled = warp(image, similarity_transform, mode = 'wrap')
-                sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_scale1.jpg', image_scaled)
-                if (folder + '/' + fileName) in X_train_files:
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_scale1.jpg' + ' ' + str(current_class_id))
-                else:
-                    X_val.append(folder + '/' + fileName.split('.')[0] + '_scale1.jpg' + ' ' + str(current_class_id))
+    for tim in range(0,3):
+      current_class_id = 0
+      for folder in directory_names:
+          current_class = folder.split(os.sep)[-1]
+          print "Reading: " + current_class + " (" + str(current_class_id) + ")"
+          classes.append(current_class)
+          for fileNameDir in os.walk(folder):
+              for fileName in fileNameDir[2]:
+                  if fileName[-4:] != ".jpg":
+                      continue
+                  #print fileName
+                  
+                  image_file = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
+                  
+                  # ===================================
+                  # The original file, no modifications
+                  # ===================================
+                  image = sc.misc.imread(image_file)
+                  
+                  if (folder + '/' + fileName) in X_train_files:
+                      X_train.append(folder + '/' + fileName + ' ' + str(current_class_id))
+                  else:
+                      X_val.append(folder + '/' + fileName + ' ' + str(current_class_id))
+                      continue
+                  
+                  # ======================
+                  # Scale 1 original image
+                  # ======================
+                  similarity_transform = SimilarityTransform(scale = 0.85)
+                  image_scaled = warp(image, similarity_transform, mode = 'wrap')
+                  sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_scale1.jpg', image_scaled)
+                  if (folder + '/' + fileName) in X_train_files:
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_scale1.jpg' + ' ' + str(current_class_id))
+                  else:
+                      X_val.append(folder + '/' + fileName.split('.')[0] + '_scale1.jpg' + ' ' + str(current_class_id))
 
-                # ======================
-                # Scale 2 original image
-                # ======================
-                similarity_transform = SimilarityTransform(scale = 1.25)
-                image_scaled = warp(image, similarity_transform, mode = 'wrap')
-                sc.misc.imsave(folder + '/' + fileName.split('.')[0]  + '_scale2.jpg', image_scaled)
-                if (folder + '/' + fileName) in X_train_files:
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_scale2.jpg' + ' ' + str(current_class_id))
-                else:
-                    X_val.append(folder + '/' + fileName.split('.')[0] + '_scale2.jpg' + ' ' + str(current_class_id))
+                  # ======================
+                  # Scale 2 original image
+                  # ======================
+                  similarity_transform = SimilarityTransform(scale = 1.15)
+                  image_scaled = warp(image, similarity_transform, mode = 'wrap')
+                  sc.misc.imsave(folder + '/' + fileName.split('.')[0]  + '_scale2.jpg', image_scaled)
+                  if (folder + '/' + fileName) in X_train_files:
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_scale2.jpg' + ' ' + str(current_class_id))
+                  else:
+                      X_val.append(folder + '/' + fileName.split('.')[0] + '_scale2.jpg' + ' ' + str(current_class_id))
 
-                # =======================================
-                # Rotate image by intervals of 45 degrees
-                # =======================================
-                for degrees in [45, 90, 135, 180, 225, 270, 315]:
+                  # =======================================
+                  # Rotate image by intervals of 45 degrees
+                  # =======================================
+                  a1,a2,a3,a4,a5,a6,a7,a8 = np.random.normal(1,0.1,8)
+                  for degrees in [a1*45.0,a2*90.0,a3*135.0,a4*180.0,-a5*45.0,-a6*90.0,-a7*135.0,-a8*180.0]:
 
-                    # =========================
-                    # Rotate image by 'degrees'
-                    # =========================
-                    image_rotated = rotate(image, degrees, mode = 'wrap')
-                    image_resized = np.resize(image_rotated, (MAX_IMAGE_PIXEL, MAX_IMAGE_PIXEL))
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '.jpg', image_resized)
-                   
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '.jpg' + ' ' + str(current_class_id))
-                 
-
-                    # =========================================
-                    # On the current rotated image, perform ...
-                    # =========================================
-
-                    # ==========================
-                    # Scale 1 (on rotated image)
-                    # ==========================
-                    similarity_transform = SimilarityTransform(scale = 0.75)
-                    image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
-                    if (folder + '/' + fileName) in X_train_files:
-                        X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg' + ' ' + str(current_class_id))
-                    else:
-                        X_val.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg' + ' ' + str(current_class_id))
-
-                    # ==========================
-                    # Scale 2 (on rotated image)
-                    # ==========================
-                    similarity_transform = SimilarityTransform(scale = 1.25)
-                    image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
-                    if (folder + '/' + fileName) in X_train_files:
-                        X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
-                    else:
-                        X_val.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
-
-                    # ==========================
-                    # Shear 1 (on rotated image)
-                    # ==========================
-                    affine_transform = AffineTransform(shear = 0.2)
-                    image_sheared = warp(image_rotated, affine_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared1.jpg', image_sheared)
+                      # =========================
+                      # Rotate image by 'degrees'
+                      # =========================
+                      image_rotated = rotate(image, degrees, mode = 'wrap')
+                      image_resized = np.resize(image_rotated, (MAX_IMAGE_PIXEL, MAX_IMAGE_PIXEL))
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '.jpg', image_resized)
                     
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared1.jpg' + ' ' + str(current_class_id))
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '.jpg' + ' ' + str(current_class_id))
                   
 
-                    # ============================================
-                    # Shear 1 Scale 1 (on rotated - sheared image)
-                    # ============================================
-                    similarity_transform = SimilarityTransform(scale = 0.75)
-                    image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale1.jpg', image_scaled)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale1.jpg' + ' ' + str(current_class_id))
-                
+                      # =========================================
+                      # On the current rotated image, perform ...
+                      # =========================================
 
-                    # ============================================
-                    # Shear 1 Scale 2 (on rotated - sheared image)
-                    # ============================================
-                    similarity_transform = SimilarityTransform(scale = 1.25)
-                    image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale2.jpg', image_scaled)
+                      # ==========================
+                      # Scale 1 (on rotated image)
+                      # ==========================
+                      a1 = np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
+                      if (folder + '/' + fileName) in X_train_files:
+                          X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg' + ' ' + str(current_class_id))
+                      else:
+                          X_val.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg' + ' ' + str(current_class_id))
+
+                      # ==========================
+                      # Scale 2 (on rotated image)
+                      # ==========================
+                      a1 = np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
+                      if (folder + '/' + fileName) in X_train_files:
+                          X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
+                      else:
+                          X_val.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
+
+                      # ==========================
+                      # Shear 1 (on rotated image)
+                      # ==========================
+                      a1 = np.random.normal(0.1,0.1,1)
+                      affine_transform = AffineTransform(shear = a1)
+                      image_sheared = warp(image_rotated, affine_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared1.jpg', image_sheared)
+                      
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared1.jpg' + ' ' + str(current_class_id))
+                    
+
+                      # ============================================
+                      # Shear 1 Scale 1 (on rotated - sheared image)
+                      # ============================================
+                      a1 =  np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale1.jpg', image_scaled)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale1.jpg' + ' ' + str(current_class_id))
                   
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale2.jpg' + ' ' + str(current_class_id))
-                
-                    # ==========================
-                    # Shear 2 (on rotated image)
-                    # ==========================
-                    affine_transform = AffineTransform(shear = -0.2)
-                    image_sheared = warp(image_rotated, affine_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared2.jpg', image_sheared)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared2.jpg' + ' ' + str(current_class_id))
-                   
-                    
-                    # ============================================
-                    # Shear 2 Scale 1 (on rotated - sheared image)
-                    # ============================================
-                    similarity_transform = SimilarityTransform(scale = 0.75)
-                    image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale1.jpg', image_scaled)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale1.jpg' + ' ' + str(current_class_id))
-                   
 
-                    # ============================================
-                    # Shear 2 Scale 2 (on rotated - sheared image)
-                    # ============================================
-                    similarity_transform = SimilarityTransform(scale = 1.25)
-                    image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale2.jpg', image_scaled)
+                      # ============================================
+                      # Shear 1 Scale 2 (on rotated - sheared image)
+                      # ============================================
+                      a1 =  np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale2.jpg', image_scaled)
                     
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale2.jpg' + ' ' + str(current_class_id))
-                   
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale2.jpg' + ' ' + str(current_class_id))
+                  
+                      # ==========================
+                      # Shear 2 (on rotated image)
+                      # ==========================
+                      a1 = np.random.normal(-0.1,0.1,1)
+                      affine_transform = AffineTransform(shear = a1)
+                      image_sheared = warp(image_rotated, affine_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared2.jpg', image_sheared)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared2.jpg' + ' ' + str(current_class_id))
+                    
+                      
+                      # ============================================
+                      # Shear 2 Scale 1 (on rotated - sheared image)
+                      # ============================================
+                      a1 = np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale1.jpg', image_scaled)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale1.jpg' + ' ' + str(current_class_id))
+                    
 
-                    # ==============================
-                    # Translate 1 (on rotated image)
-                    # ==============================
-                    similarity_transform = SimilarityTransform(translation = (0, 20))
-                    image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate1.jpg', image_translated)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate1.jpg' + ' ' + str(current_class_id))
-                 
+                      # ============================================
+                      # Shear 2 Scale 2 (on rotated - sheared image)
+                      # ============================================
+                      a1 = np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_sheared, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale2.jpg', image_scaled)
+                      
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale2.jpg' + ' ' + str(current_class_id))
                     
-                    # ==============================
-                    # Translate 2 (on rotated image)
-                    # ==============================
-                    similarity_transform = SimilarityTransform(translation = (20, 0))
-                    image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate2.jpg', image_translated)
 
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate2.jpg' + ' ' + str(current_class_id))
-                   
-                    
-                    # ==============================
-                    # Translate 3 (on rotated image)
-                    # ==============================
-                    similarity_transform = SimilarityTransform(translation = (-20, 0))
-                    image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate3.jpg', image_translated)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate3.jpg' + ' ' + str(current_class_id))
-                   
-                    
-                    # ==============================
-                    # Translate 4 (on rotated image)
-                    # ==============================
-                    similarity_transform = SimilarityTransform(translation = (0, -20))
-                    image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate4.jpg', image_translated)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate4.jpg' + ' ' + str(current_class_id))
-                    
-                    
-                    # Scale 1
-                    similarity_transform = SimilarityTransform(scale = 0.75)
-                    image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg' + ' ' + str(current_class_id))
-             
+                      # ==============================
+                      # Translate 1 (on rotated image)
+                      # ==============================
+                      a1,a2 = np.random.normal(15,5,2)                 
+                      similarity_transform = SimilarityTransform(translation = (a1, a2))
+                      image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate1.jpg', image_translated)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate1.jpg' + ' ' + str(current_class_id))
+                  
+                      
+                      # ==============================
+                      # Translate 2 (on rotated image)
+                      # ==============================
+                      a1,a2 = np.random.normal(15,5,2)
+                      similarity_transform = SimilarityTransform(translation = (a1, a2))
+                      image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate2.jpg', image_translated)
 
-                    # Scale 2
-                    similarity_transform = SimilarityTransform(scale = 1.25)
-                    image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
-                    sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
-                    X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
-          
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate2.jpg' + ' ' + str(current_class_id))
+                    
+                      
+                      # ==============================
+                      # Translate 3 (on rotated image)
+                      # ==============================
+                      a1,a2 = np.random.normal(-15,5,2)
+                      similarity_transform = SimilarityTransform(translation = (a1, a2))
+                      image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate3.jpg', image_translated)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate3.jpg' + ' ' + str(current_class_id))
+                    
+                      
+                      # ==============================
+                      # Translate 4 (on rotated image)
+                      # ==============================
+                      a1 = np.random.normal(-15,5,1)
+                      a2 = np.random.normal(15,5,1)
+                      similarity_transform = SimilarityTransform(translation = (a1, a2))
+                      image_translated = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate4.jpg', image_translated)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate4.jpg' + ' ' + str(current_class_id))
+                      
+                      
+                      # Scale 1
+                      a1 = np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale = a1)
+                      image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg' + ' ' + str(current_class_id))
+              
 
-        current_class_id += 1
+                      # Scale 2
+                      a1 = np.random.normal(1,0.1,1)
+                      similarity_transform = SimilarityTransform(scale =a1)
+                      image_scaled = warp(image_rotated, similarity_transform, mode = 'wrap')
+                      sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
+                      X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
+            
+
+          current_class_id += 1
+      
         
     return X_train, X_val, X_train_files, X_val_files, files, classes
 

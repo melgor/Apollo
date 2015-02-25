@@ -7,12 +7,14 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score
 from matplotlib.pylab import cm
+import cPickle as pickle
 
 parser = argparse.ArgumentParser(description='Run Caffe model from dir and given label')
 parser.add_argument('--images', required=True,help='path to file with paths to images')
 parser.add_argument('--proto_path', required=True,help='path to proto file')
 parser.add_argument('--bin_path', required=True,help='path to binary Net')
 parser.add_argument('--mapper', required=False,help='mapper between labels, use when create submission')
+parser.add_argument('--kaggle_label', required=False,help='original order of Kaggle label')
 parser.add_argument('--extract_prob', required=False,action="store_true",help='extract prob and save to file')
 parser.add_argument('--viz', required=False,help='vizualize featues, give path to image')
 
@@ -66,14 +68,19 @@ def test_accuracy_multi(args):
   list_all_result = list()
   list_good_class_all = list()
   if args.mapper != None:
-    #create mapping between our labels and Kaggle labels
-    with open(args.mapper) as data_file:    
-      maper = json.load(data_file)
+    with open(args.mapper,'r') as f:
+      lab_our = pickle.load(f)
+    with open(args.kaggle_label,'r') as f:
+      lab_kaggle = pickle.load(f) 
+    mapper = dict()  
+    for idx,elem in enumerate(lab_our):
+      mapper[str(idx)] = lab_kaggle.index(elem)
+
   
     good_list = list()
     for i in range(121):
       key_value  = 0
-      for key,elem in maper.iteritems():
+      for key,elem in mapper.iteritems():
         if i == elem:
           key_value =  key
           break
@@ -132,13 +139,18 @@ def prob_image(args):
   max_value = 512 
   curr_value = 0
   if args.mapper != None:
-    with open(args.mapper) as data_file:    
-      maper = json.load(data_file)
+    with open(args.mapper,'r') as f:
+      lab_our = pickle.load(f)
+    with open(args.kaggle_label,'r') as f:
+      lab_kaggle = pickle.load(f) 
+    mapper = dict()  
+    for idx,elem in enumerate(lab_our):
+      mapper[str(idx)] = lab_kaggle.index(elem)
       
     good_list = list()
     for i in range(121):
       key_value  = 0
-      for key,elem in maper.iteritems():
+      for key,elem in mapper.iteritems():
         if i == elem:
           key_value =  key
           break
