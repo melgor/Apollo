@@ -16,7 +16,6 @@ The main.py is used for prediction and it has following arguments:
   - images       : path to file with pathes to images ex. produced by augmented script
   - proto_path   : path to deploy file for Caffe model
   - bin_path     : path to caffe model
-  - mapper       : file for creating mapping between our labels and Kaggle (Optional)
   - extract_prob : use model for extracting probabilities from images for each sample. Save it as csv file
   
   
@@ -27,10 +26,12 @@ For running caffe model for prediction or creating submission:
  
 Create file for submission:
   1. Run prediction script. Mapper is needed to transform our labels to Kaggle labels
-  ./main.py --images path_to_file  --proto_path path_to_deploy --bin_path path_to_binary_model --mapper path_to_mapper --extract_prob
+  ./main.py --images path_to_file  --proto_path path_to_deploy --bin_path path_to_binary_model --extract_prob
   This script will produce "probabilities_kaggle.txt" file, which can be used for creating submission
  
  2. After createing "probabilities_kaggle.txt" file, to create .csv file use "make_submission.py"
-  python make_submission.py sampleSubmission.csv img_test.lst probabilities_kaggle.txt out.csv
+  python make_submission.py mapper.pickle img_test.lst probabilities_kaggle.txt out.csv
+  
+  "mapper.pickle" have to be taken from Sandipto script, which was used for data augmentation
 
  
