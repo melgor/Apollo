@@ -12,7 +12,6 @@ parser = argparse.ArgumentParser(description='Run Caffe model from dir and given
 parser.add_argument('--images', required=True,help='path to file with paths to images')
 parser.add_argument('--proto_path', required=True,help='path to proto file')
 parser.add_argument('--bin_path', required=True,help='path to binary Net')
-parser.add_argument('--mapper', required=False,help='mapper between labels, use when create submission')
 parser.add_argument('--extract_prob', required=False,action="store_true",help='extract prob and save to file')
 parser.add_argument('--viz', required=False,help='vizualize featues, give path to image')
 
@@ -65,19 +64,6 @@ def test_accuracy_multi(args):
   curr_value = 0
   list_all_result = list()
   list_good_class_all = list()
-  if args.mapper != None:
-    #create mapping between our labels and Kaggle labels
-    with open(args.mapper) as data_file:    
-      maper = json.load(data_file)
-  
-    good_list = list()
-    for i in range(121):
-      key_value  = 0
-      for key,elem in maper.iteritems():
-        if i == elem:
-          key_value =  key
-          break
-      good_list.append(int(key))
     
   with open(args.images,'r') as file_image:
     list_images = list()
@@ -94,11 +80,7 @@ def test_accuracy_multi(args):
       else:
         #predict using value
         predictions = pred.predict_multi(list_images)
-        if args.mapper != None:
-          pred_good = predictions[:,good_list]
-        else:
-          pred_good = predictions
-        list_all_result.append(pred_good)
+        list_all_result.append(predictions)
         list_good_class_all.extend(list_good_class)
         list_good_class = list()
         list_images = list()
@@ -107,11 +89,7 @@ def test_accuracy_multi(args):
     #predict last package of data, which is smaller than max_value
     if len(list_images) > 0:
       predictions = pred.predict_multi(list_images)
-      if args.mapper != None:
-          pred_good = predictions[:,good_list]
-      else:
-          pred_good = predictions
-      list_all_result.append(pred_good)
+      list_all_result.append(predictions)
           
   #test loss
   list_good_class_all.extend(list_good_class)
@@ -131,18 +109,6 @@ def prob_image(args):
   pred = Prediction(args.proto_path,args.bin_path)
   max_value = 512 
   curr_value = 0
-  if args.mapper != None:
-    with open(args.mapper) as data_file:    
-      maper = json.load(data_file)
-      
-    good_list = list()
-    for i in range(121):
-      key_value  = 0
-      for key,elem in maper.iteritems():
-        if i == elem:
-          key_value =  key
-          break
-      good_list.append(int(key))
 
 
   with open(args.images,'r') as file_image:
@@ -157,24 +123,16 @@ def prob_image(args):
       else:
         #predict using value
         predictions = pred.predict_multi(list_images)
-        if args.mapper != None:
-          pred_good = predictions[:,good_list]
-        else:
-          pred_good = predictions
         list_images = list()
         list_good_class = list()
         curr_value = 0
-        list_predictions.append(pred_good)
+        list_predictions.append(predictions)
         print predictions.shape
         
     if len(list_images) > 0:
       #predict using value
       predictions = pred.predict_multi(list_images)
-      if args.mapper != None:
-         pred_good = predictions[:,good_list]
-      else:
-         pred_good = predictions
-      list_predictions.append(pred_good)
+      list_predictions.append(predictions)
   
   all_pred = np.vstack(list_predictions)
   #np.save('pred.npy',all_pred)
