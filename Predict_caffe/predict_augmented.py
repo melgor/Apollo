@@ -17,7 +17,7 @@ from skimage.transform import rotate
 import glob
 
 
-def generate_transformations(image, fileName, folder):
+def generate_transformations(image, fileName):
     MAX_IMAGE_PIXEL = 96
 
     transformed_images = [image]
