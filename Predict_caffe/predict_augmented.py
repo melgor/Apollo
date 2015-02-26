@@ -14,7 +14,6 @@ from skimage.transform import SimilarityTransform
 from skimage.transform import warp
 from skimage.transform import rotate
 import glob
-print glob.glob("/home/adam/*.txt")
 
 def generate_transformations(image, fileName, folder):
   MAX_IMAGE_PIXEL = 96
@@ -30,7 +29,6 @@ def generate_transformations(image, fileName, folder):
     # ======================
     similarity_transform = SimilarityTransform(scale = 0.75)
     image_scaled = warp(image, similarity_transform, mode = 'wrap')
-    print image_scaled
     transformed_images.append(image_scaled)
     # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_scale1.jpg', image_scaled)
 
@@ -182,7 +180,6 @@ def generate_transformations(image, fileName, folder):
   else:
     transformed_images = []
     transformed_images_filenames = glob.glob(folder + '/' + fileName.split('.')[0])
-    print transformed_images_filenames
     for image_file in transformed_images_filenames:
       transformed_images.append(imread(image_file))
 
@@ -209,18 +206,19 @@ class PredictionAugmented(object):
     input_image = caffe.io.load_image(image,color=False)
     filename = image.split('/')[-1]
     transformed_images = generate_transformations(input_image, filename, self.transformed_path)
-    predictions = []
     for ti in transformed_images:
         ti.shape = (96,96,1)
-        predictions.append(self.net.predict([ti], oversample=False))
+    predictions = []
+    predictions = self.net.predict(transformed_images, oversample=False)
     prediction = np.mean(predictions, axis=0)
     return prediction
 
   def predict_multi(self, images):
     """Predict using Caffe normal model"""
     predictions = []
-    for image in images:
-      print image
+    for i, image in enumerate(images):
+      if i%100 == 0:
+	print "predicted for ",i," images"
       predictions.append(self.predict(image))
     return np.array(predictions)
 
