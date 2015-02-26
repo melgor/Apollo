@@ -13,8 +13,6 @@ parser = argparse.ArgumentParser(
     description='Run Caffe model from dir and given label')
 parser.add_argument(
     '--images', required=True, help='path to file with paths to images')
-parser.add_argument('--transformed_path', required=True,
-                    help='path where to store transformed test images')
 parser.add_argument('--proto_path', required=True, help='path to proto file')
 parser.add_argument('--bin_path', required=True, help='path to binary Net')
 parser.add_argument('--extract_prob', required=False,
