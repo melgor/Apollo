@@ -2,11 +2,11 @@
 import numpy as np
 import argparse,os
 from predict_augmented import PredictionAugmented
-from viz import Vizualization
+# from viz import Vizualization
 import json
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score
-from matplotlib.pylab import cm
+# from matplotlib.pylab import cm
 
 parser = argparse.ArgumentParser(description='Run Caffe model from dir and given label')
 parser.add_argument('--images', required=True,help='path to file with paths to images')
@@ -84,7 +84,7 @@ def test_accuracy_multi(args):
     list_images = list()
     list_good_class = list()
     for line in file_image:
-      splitted = line.split('\t')
+      splitted = line.split()
       #if not os.path.isfile(splitted[0].strip()):
         #continue
       list_good_class.append(int(splitted[1]))
