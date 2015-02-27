@@ -159,6 +159,8 @@ def generate_tranformations_for_rotated_image(image, fileName, degrees):
     transformed_images.append(image_scaled)
     # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
 
+    return transformed_images
+
 def generate_transformations(image, fileName):
     MAX_IMAGE_PIXEL = 96
 
