@@ -2,6 +2,7 @@
 import numpy as np
 import argparse
 import os
+import time
 from predict_augmented import PredictionAugmented
 # from viz import Vizualization
 import json
@@ -115,6 +116,7 @@ def prob_image(args):
     pred = PredictionAugmented(args.proto_path, args.bin_path)
     max_value = 512
     curr_value = 0
+    batch = 0
 
     with open(args.images, 'r') as file_image:
         list_images = list()
@@ -127,12 +129,16 @@ def prob_image(args):
                 continue
             else:
                 # predict using value
+                print "==== Predicting for batch {0} ====".format(batch)
+                start = time.time()
                 predictions = pred.predict_multi(list_images)
                 list_images = list()
                 list_good_class = list()
                 curr_value = 0
                 list_predictions.append(predictions)
-                print predictions.shape
+                end = time.time()
+                print "==== End batch {0} - took {1} ====".format(end - start, batch)
+                batch += 1
 
         if len(list_images) > 0:
             # predict using value

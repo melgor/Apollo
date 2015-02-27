@@ -212,6 +212,6 @@ class PredictionAugmented(object):
         predictions = []
         for i, image in enumerate(images):
             if i % 100 == 0:
-                print "predicted for ", i, " images"
+                print "Processed {0} images ...".format(i)
             predictions.append(self.predict(image))
         return np.array(predictions)
