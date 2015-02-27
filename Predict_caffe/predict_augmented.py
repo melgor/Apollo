@@ -15,7 +15,148 @@ from skimage.transform import SimilarityTransform
 from skimage.transform import warp
 from skimage.transform import rotate
 import glob
+from joblib import Parallel, delayed
 
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+
+
+def generate_tranformations_for_rotated_image(image, fileName, degrees):
+    transformed_images = []
+    # =========================
+    # Rotate image by 'degrees'
+    # =========================
+    image_rotated = rotate(image, degrees, mode='wrap')
+    transformed_images.append(image_rotated)
+    image_resized = np.resize(
+        image_rotated, (MAX_IMAGE_PIXEL, MAX_IMAGE_PIXEL))
+    transformed_images.append(image_resized)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '.jpg', image_resized)
+
+    # =========================================
+    # On the current rotated image, perform ...
+    # =========================================
+
+    # ==========================
+    # Scale 1 (on rotated image)
+    # ==========================
+    similarity_transform = SimilarityTransform(scale=0.75)
+    image_scaled = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
+
+    # ==========================
+    # Scale 2 (on rotated image)
+    # ==========================
+    similarity_transform = SimilarityTransform(scale=1.25)
+    image_scaled = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
+
+    # ==========================
+    # Shear 1 (on rotated image)
+    # ==========================
+    affine_transform = AffineTransform(shear=0.2)
+    image_sheared = warp(image_rotated, affine_transform, mode='wrap')
+    transformed_images.append(image_sheared)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared1.jpg', image_sheared)
+
+    # ============================================
+    # Shear 1 Scale 1 (on rotated - sheared image)
+    # ============================================
+    similarity_transform = SimilarityTransform(scale=0.75)
+    image_scaled = warp(
+        image_sheared, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale1.jpg', image_scaled)
+
+    # ============================================
+    # Shear 1 Scale 2 (on rotated - sheared image)
+    # ============================================
+    similarity_transform = SimilarityTransform(scale=1.25)
+    image_scaled = warp(
+        image_sheared, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale2.jpg', image_scaled)
+
+    # ==========================
+    # Shear 2 (on rotated image)
+    # ==========================
+    affine_transform = AffineTransform(shear=-0.2)
+    image_sheared = warp(image_rotated, affine_transform, mode='wrap')
+    transformed_images.append(image_sheared)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared2.jpg', image_sheared)
+
+    # ============================================
+    # Shear 2 Scale 1 (on rotated - sheared image)
+    # ============================================
+    similarity_transform = SimilarityTransform(scale=0.75)
+    image_scaled = warp(
+        image_sheared, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale1.jpg', image_scaled)
+
+    # ============================================
+    # Shear 2 Scale 2 (on rotated - sheared image)
+    # ============================================
+    similarity_transform = SimilarityTransform(scale=1.25)
+    image_scaled = warp(
+        image_sheared, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale2.jpg', image_scaled)
+
+    # ==============================
+    # Translate 1 (on rotated image)
+    # ==============================
+    similarity_transform = SimilarityTransform(translation=(0, 20))
+    image_translated = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_translated)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate1.jpg', image_translated)
+
+    # ==============================
+    # Translate 2 (on rotated image)
+    # ==============================
+    similarity_transform = SimilarityTransform(translation=(20, 0))
+    image_translated = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_translated)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate2.jpg', image_translated)
+
+    # ==============================
+    # Translate 3 (on rotated image)
+    # ==============================
+    similarity_transform = SimilarityTransform(translation=(-20, 0))
+    image_translated = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_translated)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate3.jpg', image_translated)
+
+    # ==============================
+    # Translate 4 (on rotated image)
+    # ==============================
+    similarity_transform = SimilarityTransform(translation=(0, -20))
+    image_translated = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_translated)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate4.jpg', image_translated)
+
+    # Scale 1
+    similarity_transform = SimilarityTransform(scale=0.75)
+    image_scaled = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
+
+    # Scale 2
+    similarity_transform = SimilarityTransform(scale=1.25)
+    image_scaled = warp(
+        image_rotated, similarity_transform, mode='wrap')
+    transformed_images.append(image_scaled)
+    # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
 
 def generate_transformations(image, fileName):
     MAX_IMAGE_PIXEL = 96
@@ -40,142 +181,9 @@ def generate_transformations(image, fileName):
     # =======================================
     # Rotate image by intervals of 45 degrees
     # =======================================
-    for degrees in [45, 90, 135, 180, 225, 270, 315]:
-
-        # =========================
-        # Rotate image by 'degrees'
-        # =========================
-        image_rotated = rotate(image, degrees, mode='wrap')
-        transformed_images.append(image_rotated)
-        image_resized = np.resize(
-            image_rotated, (MAX_IMAGE_PIXEL, MAX_IMAGE_PIXEL))
-        transformed_images.append(image_resized)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '.jpg', image_resized)
-
-        # =========================================
-        # On the current rotated image, perform ...
-        # =========================================
-
-        # ==========================
-        # Scale 1 (on rotated image)
-        # ==========================
-        similarity_transform = SimilarityTransform(scale=0.75)
-        image_scaled = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
-
-        # ==========================
-        # Scale 2 (on rotated image)
-        # ==========================
-        similarity_transform = SimilarityTransform(scale=1.25)
-        image_scaled = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
-
-        # ==========================
-        # Shear 1 (on rotated image)
-        # ==========================
-        affine_transform = AffineTransform(shear=0.2)
-        image_sheared = warp(image_rotated, affine_transform, mode='wrap')
-        transformed_images.append(image_sheared)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared1.jpg', image_sheared)
-
-        # ============================================
-        # Shear 1 Scale 1 (on rotated - sheared image)
-        # ============================================
-        similarity_transform = SimilarityTransform(scale=0.75)
-        image_scaled = warp(
-            image_sheared, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale1.jpg', image_scaled)
-
-        # ============================================
-        # Shear 1 Scale 2 (on rotated - sheared image)
-        # ============================================
-        similarity_transform = SimilarityTransform(scale=1.25)
-        image_scaled = warp(
-            image_sheared, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear1_scale2.jpg', image_scaled)
-
-        # ==========================
-        # Shear 2 (on rotated image)
-        # ==========================
-        affine_transform = AffineTransform(shear=-0.2)
-        image_sheared = warp(image_rotated, affine_transform, mode='wrap')
-        transformed_images.append(image_sheared)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_sheared2.jpg', image_sheared)
-
-        # ============================================
-        # Shear 2 Scale 1 (on rotated - sheared image)
-        # ============================================
-        similarity_transform = SimilarityTransform(scale=0.75)
-        image_scaled = warp(
-            image_sheared, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale1.jpg', image_scaled)
-
-        # ============================================
-        # Shear 2 Scale 2 (on rotated - sheared image)
-        # ============================================
-        similarity_transform = SimilarityTransform(scale=1.25)
-        image_scaled = warp(
-            image_sheared, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_shear2_scale2.jpg', image_scaled)
-
-        # ==============================
-        # Translate 1 (on rotated image)
-        # ==============================
-        similarity_transform = SimilarityTransform(translation=(0, 20))
-        image_translated = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_translated)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate1.jpg', image_translated)
-
-        # ==============================
-        # Translate 2 (on rotated image)
-        # ==============================
-        similarity_transform = SimilarityTransform(translation=(20, 0))
-        image_translated = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_translated)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate2.jpg', image_translated)
-
-        # ==============================
-        # Translate 3 (on rotated image)
-        # ==============================
-        similarity_transform = SimilarityTransform(translation=(-20, 0))
-        image_translated = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_translated)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate3.jpg', image_translated)
-
-        # ==============================
-        # Translate 4 (on rotated image)
-        # ==============================
-        similarity_transform = SimilarityTransform(translation=(0, -20))
-        image_translated = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_translated)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_translate4.jpg', image_translated)
-
-        # Scale 1
-        similarity_transform = SimilarityTransform(scale=0.75)
-        image_scaled = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale1.jpg', image_scaled)
-
-        # Scale 2
-        similarity_transform = SimilarityTransform(scale=1.25)
-        image_scaled = warp(
-            image_rotated, similarity_transform, mode='wrap')
-        transformed_images.append(image_scaled)
-        # sc.misc.imsave(folder + '/' + fileName.split('.')[0] + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
-
+    result = Parallel(n_jobs=7)(delayed(generate_tranformations_for_rotated_image)(image, fileName, degrees)
+        for degrees in [45, 90, 135, 180, 225, 270, 315])
+    transformed_images.extend(flatten(result))
     return transformed_images
 
 
