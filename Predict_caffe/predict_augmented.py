@@ -23,6 +23,7 @@ def flatten(l):
 
 
 def generate_tranformations_for_rotated_image(image, fileName, degrees):
+    MAX_IMAGE_PIXEL = 96
     transformed_images = []
     # =========================
     # Rotate image by 'degrees'
@@ -210,7 +211,6 @@ class PredictionAugmented(object):
             input_image, filename)
         for ti in transformed_images:
             ti.shape = (96, 96, 1)
-        predictions = []
         predictions = self.net.predict(transformed_images, oversample=False)
         prediction = np.mean(predictions, axis=0)
         return prediction
