@@ -13,9 +13,9 @@ import cPickle as pickle
 ###############################################################################
 
 # Training set directory where 96x96 images are present (using gen_train.py)
-FTRAIN = '/home/blcv/CODE/Plancton/Test_96/train_aug_all/'
+FTRAIN = '/home/ubuntu/ndsb/images/train_96x96/'
 # File list directory
-FLIST = '/home/blcv/CODE/Plancton/Test_96/train_aug_all/'
+FLIST = '/home/ubuntu/ndsb/images/train_96x96'
 # File prefix
 FPREFIX = 'train_96x96_aug_'
 # Pixel size for final image
