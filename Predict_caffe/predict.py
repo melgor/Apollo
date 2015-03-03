@@ -1,5 +1,5 @@
 import numpy as np
-#import cv2
+import cv2
 import os
 # Make sure that caffe is on the python path:
 caffe_root = '/home/blcv/LIB/caffe/'  # this file is expected to be in {caffe_root}/examples

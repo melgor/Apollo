@@ -1,21 +1,37 @@
 import pandas as pd
 
+'''
+You need to change the paths to your own directoris.
+
+Edit the cap variables to play around with them.
+'''
+
+path_in_csv = '/Users/me/Desktop/merge_4_model.csv'
+path_out_csv = '/Users/me/Desktop/capTest_new.csv'
+min_cap = .005
+max_cap = .99
+
+
 def cap_min_prediction(prediction):
-    if prediction < (1*10**-6):
-        prediction = (1*10**-6)
+    if prediction < min_cap:
+        prediction = min_cap
     return prediction
+
 
 def cap_max_prediction(prediction):
-    if prediction > (.99):
-        prediction = (.99)
+    if isinstance(prediction, str):
+        pass
+    else:
+        if prediction > max_cap:
+            prediction = max_cap
     return prediction
 
-df = pd.read_csv('/Users/me/Desktop/merge_4_model.csv',header=0)
-#df2 = pd.read_csv('/Users/me/Desktop/out_pool_alex_f.csv',header=0)
+df = pd.read_csv(path_in_csv, header=0)
 
-#df_combined = (df1+df2)/2
+# print df.describe()
 
-
-#cap = (1*10**-10)
+# comment out if you only want a max or min cap.
 df = df.applymap(cap_min_prediction)
-df.to_csv('/Users/me/Desktop/capTest_new.csv', index=False)
+df = df.applymap(cap_max_prediction)
+
+df.to_csv(path_out_csv, index=False)
