@@ -50,6 +50,7 @@ def extract_multi(args):
     if len(list_images) > 0:
       predictions = pred.predict_multi(list_images)
       list_all_result.append(predictions)
+      f = Feature(predictions,list_good_class)
       name = '/'.join((args.folder,str(idx)+"_file.cPickle"))
       save_cPickle(f,name)
       list_name_file.append(os.path.abspath(name))
