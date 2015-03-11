@@ -17,9 +17,9 @@ class Extractor(caffe.Net):
     PRETRAINED = bin_path 
     
     caffe.set_phase_test()
-    #caffe.set_device(1)
-    caffe.set_mode_cpu()
-    #caffe.set_device(1)
+    caffe.set_device(0)
+    caffe.set_mode_gpu()
+    caffe.set_device(0)
     caffe.Net.__init__(self, MODEL_FILE, PRETRAINED)
     self.set_raw_scale(self.inputs[0], 255.0)
     self.set_mean(self.inputs[0], np.load('mean_file.npy'))

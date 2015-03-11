@@ -8,7 +8,7 @@ from predict_augmented import PredictionAugmented
 import json
 # import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score
-# from matplotlib.pylab import cm
+from utils import *
 
 parser = argparse.ArgumentParser(
     description='Run Caffe model from dir and given label')
@@ -103,14 +103,15 @@ def test_accuracy_multi(args):
     # test loss
     list_good_class_all.extend(list_good_class)
     y_truth = np.asarray(list_good_class_all)
-    y_pred = np.vstack(list_all_result)
-    y_pred_label = np.argmax(y_pred, axis=1)
-    print y_truth.shape, y_pred.shape
-    print "Accuracy: ", accuracy_score(y_truth, y_pred_label)
-    print "Loss: ", multiclass_log_loss(y_truth, y_pred)
+    #y_pred = np.vstack(list_all_result)
+    #y_pred_label = np.argmax(y_pred, axis=1)
+    #print y_truth.shape, y_pred.shape
+    #print "Accuracy: ", accuracy_score(y_truth, y_pred_label)
+    #print "Loss: ", multiclass_log_loss(y_truth, y_pred)
     # plot_confusion_matrix(y_truth, y_pred_label)
-    np.save('casia_deep_aug.npy',y_pred)
-
+    np.save('labels_image.npy',y_truth)
+    save_cPickle(list_all_result, "amnie_val_all.npy")
+    
 def prob_image(args):
     list_predictions = list()
     pred = PredictionAugmented(args.proto_path, args.bin_path)
@@ -145,10 +146,9 @@ def prob_image(args):
             predictions = pred.predict_multi(list_images)
             list_predictions.extend(predictions)
 
-    #all_pred = np.vstack(list_predictions)
-    save_cPickle('probabilities_kaggle_casia_cnn_aug_fine.npy',list_predictions)
-    #np.save('pred.npy',all_pred)
-    #np.savetxt('probabilities_kaggle_casia_cnn_aug_fine.txt', all_pred, fmt='%1.9e')
+    all_pred = np.vstack(list_predictions)
+    np.save('probabilities_kaggle_casia_cnn_aug.npy',all_pred)
+    np.savetxt('probabilities_kaggle_casia_cnn_aug.txt', all_pred, fmt='%1.9e')
 
 if __name__ == '__main__':
     args = parser.parse_args()

@@ -224,4 +224,5 @@ class PredictionAugmented(object):
             if i % 100 == 0:
                 print "Processed {0} images ...".format(i)
             predictions.append(self.predict(image))
+        print "l ", len(predictions)
         return predictions
