@@ -3,7 +3,7 @@ import cv2
 import os
 # Make sure that caffe is on the python path:
 # this file is expected to be in {caffe_root}/examples
-caffe_root = '/home/blcv/LIB/caffe/'
+caffe_root = '/home/ubuntu/repositories/caffe/'
 import sys
 sys.path.insert(0, caffe_root + 'python')
 import caffe
@@ -19,11 +19,11 @@ class Extractor(caffe.Net):
         MODEL_FILE = proto_path
         PRETRAINED = bin_path
 
-        caffe.set_phase_test()
+        # caffe.set_phase_test()
         # caffe.set_device(1)
-        caffe.set_mode_cpu()
+        caffe.set_mode_gpu()
         # caffe.set_device(1)
-        caffe.Net.__init__(self, MODEL_FILE, PRETRAINED)
+        caffe.Net.__init__(self, MODEL_FILE, PRETRAINED, caffe.TEST)
 
         in_ = self.inputs[0]
         self.transformer = caffe.io.Transformer(
@@ -58,7 +58,7 @@ class Extractor(caffe.Net):
         caffe_in = np.zeros(np.array(input_.shape)[[0, 3, 1, 2]],
                             dtype=np.float32)
         for ix, in_ in enumerate(input_):
-            caffe_in[ix] = self.preprocess(self.inputs[0], in_)
+            caffe_in[ix] = self.transformer.preprocess(self.inputs[0], in_)
         out = self.forward_all(**{self.inputs[0]: caffe_in})
         predictions = out[self.outputs[0]].squeeze(axis=(2, 3))
 

@@ -4,8 +4,9 @@ from collections import namedtuple
 import h5py
 
 Feature = namedtuple('Feature', 'data label')
-LIST_MODELS = [('amine.caffemodel', 'amine.prototxt')]
+LIST_MODELS = [('amine__iter_20000.caffemodel', 'amine.prototxt')]
 OUTPUT_FOLDER = "./combined_features"
+images = "train_96x96_aug_val.txt"
 
 
 def predict_and_combine(extractors, list_images):
@@ -34,8 +35,7 @@ def extract_from_models():
     list_all_result = list()
     list_good_class_all = list()
     list_name_file = list()
-    create_dir(args.folder)
-    with open(args.images, 'r') as file_image:
+    with open(images, 'r') as file_image:
         list_images = list()
         list_good_class = list()
         for idx, line in enumerate(file_image):
@@ -46,6 +46,7 @@ def extract_from_models():
             if curr_value < max_value:
                 continue
             else:
+		print "Predicting for batch at index ",idx
                 # predict using value
                 features = predict_and_combine(extractors, list_images)
                 name = '/'.join((OUTPUT_FOLDER, str(idx) + "_file.h5py"))
@@ -62,3 +63,6 @@ def extract_from_models():
             name = '/'.join((OUTPUT_FOLDER, str(idx) + "_file.cPickle"))
             write_features_h5file(features, np.array(list_good_class), name)
             list_name_file.append(os.path.abspath(name))
+
+if __name__ == "__main__":
+	extract_from_models()
