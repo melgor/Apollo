@@ -194,7 +194,8 @@ def transform():
                     # validation folder.  See the notes on this.
 
                     sc.misc.imsave(
-                        folder + '/' + fileName.split('.')[0] + '_' + str(degrees) + '_scale2.jpg', image_scaled)
+                        folder + '/' + fileName.split('.')[0], image_scaled)
+
                     X_train.append(folder + '/' + fileName.split('.')[0] + '_' + str(
                         degrees) + '_scale2.jpg' + ' ' + str(current_class_id))
 

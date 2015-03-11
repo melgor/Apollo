@@ -16,6 +16,8 @@ sz = sys.argv[3]
 cmd = "convert "
 imgs = os.listdir(fi)
 
+if '.DS_Store' in imgs:
+    imgs.remove('.DS_Store')
 
 for img in imgs:
     md = ""
@@ -24,6 +26,7 @@ for img in imgs:
     md += " -resize " + sz + "x" + sz + "\!"
     md += " " + fo + img
     os.system(md)
+    #pause
 
 
 
