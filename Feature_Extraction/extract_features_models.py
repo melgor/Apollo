@@ -60,7 +60,7 @@ def extract_from_models():
         # predict last package of data, which is smaller than max_value
         if len(list_images) > 0:
             features = predict_and_combine(list_images)
-            name = '/'.join((OUTPUT_FOLDER, str(idx) + "_file.cPickle"))
+            name = '/'.join((OUTPUT_FOLDER, str(idx) + "_file.h5py"))
             write_features_h5file(features, np.array(list_good_class), name)
             list_name_file.append(os.path.abspath(name))
 
