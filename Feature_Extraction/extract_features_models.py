@@ -21,7 +21,7 @@ def write_features_h5file(features, labels, filename):
     comp_kwargs = {'compression': 'gzip', 'compression_opts': 1}
     with h5py.File(filename, 'w') as f:
         f.create_dataset('data', data=features, **comp_kwargs)
-        f.create_dataset('label', data=labels, **comp_kwargs)
+        f.create_dataset('label', data=labels.astype(np.float32), **comp_kwargs)
     with open(OUTPUT_FOLDER + "/features_files_list.txt", 'a') as f:
         f.write(filename + "\n")
 
