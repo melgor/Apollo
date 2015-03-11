@@ -45,6 +45,7 @@ def extract_multi(args):
         list_good_class = list()
         list_images = list()
         curr_value = 0
+        print "Predicted 512"
         
     #predict last package of data, which is smaller than max_value
     if len(list_images) > 0:

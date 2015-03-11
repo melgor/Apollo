@@ -52,6 +52,7 @@ def plot_confusion_matrix(true_labels,pred_labels):
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     plt.savefig('Conf_Matrix.png', bbox_inches='tight')
+    np.save('conf_mat.npy',conf_mat)
   
 def test_accuracy_multi(args):
   # Compute Accuracy of images from input file
@@ -69,7 +70,7 @@ def test_accuracy_multi(args):
     list_images = list()
     list_good_class = list()
     for line in file_image:
-      splitted = line.split('\t')
+      splitted = line.split(' ')
       #if not os.path.isfile(splitted[0].strip()):
         #continue
       list_good_class.append(int(splitted[1]))
@@ -100,6 +101,7 @@ def test_accuracy_multi(args):
   print "Accuracy: ", accuracy_score(y_truth,y_pred_label)
   print "Loss: ",multiclass_log_loss(y_truth,y_pred)
   plot_confusion_matrix(y_truth,y_pred_label)
+  np.save('casia_deep.npy',y_pred)
  
   
   
@@ -135,8 +137,8 @@ def prob_image(args):
       list_predictions.append(predictions)
   
   all_pred = np.vstack(list_predictions)
-  #np.save('pred.npy',all_pred)
-  np.savetxt('probabilities_kaggle.txt', all_pred, fmt='%1.9e')
+  np.save('fine_sand.npy',all_pred)
+  np.savetxt('probabilities_kaggle_aug_fine_m.txt', all_pred, fmt='%1.9e')
   
 if __name__ == '__main__':
   args        = parser.parse_args()
