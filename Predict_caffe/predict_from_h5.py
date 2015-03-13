@@ -22,19 +22,20 @@ class PredictionFromH5(object):
 
   def predict(self, h5file):
     """Predict using Caffe normal model"""
-    print "File used ",h5file
+    # print "File used ",h5file
     f = h5py.File(h5file.strip(), "r")
     input_features = f["data"].value
     predictions = np.zeros((128,121))
     bs = 32
     for i in range(input_features.shape[0]/bs):
       data4D = np.zeros([bs,1,1,5120])
-      data4DL = np.zeros([bs,1,1,121])
-      data4D[:,0,0,:] = input_features[i*bs,(i+1)*bs,:]
+      data4DL = np.zeros([bs,1,1,1])
+      data4D[:,0,0,:] = input_features[i*bs:(i+1)*bs,:]
       self.net.set_input_arrays(data4D.astype(np.float32),data4DL.astype(np.float32))
       pred = self.net.forward()
+      # print pred['fc2'].shape
       pred['fc2'].shape = (bs,121)
-      predictions[i*bs,(i+1)*bs,:] = pred['fc2']
+      predictions[i*bs:(i+1)*bs,:] = pred['fc2']
     return predictions
 
 
