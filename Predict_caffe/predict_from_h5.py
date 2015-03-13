@@ -17,15 +17,16 @@ class PredictionFromH5(object):
     MODEL_FILE = proto_path
     PRETRAINED = bin_path
 
-    self.net = caffe.Net (MODEL_FILE,PRETRAINED)
+    self.net = caffe.Net (MODEL_FILE,PRETRAINED, caffe.TEST)
 
 
   def predict(self, h5file):
     """Predict using Caffe normal model"""
-    f = h5py.File(h5file, "r")
+    print "File used ",h5file
+    f = h5py.File(h5file.strip(), "r")
     input_features = f["data"].value
     data4D = np.zeros([128,1,1,5120])
-    data4DL = np.zeros([128,1,1,121])
+    data4DL = np.zeros([128,1,1,1])
     data4D[:,0,0,:] = input_features
     self.net.set_input_arrays(data4D.astype(np.float32),data4DL.astype(np.float32))
     pred = self.net.forward()
