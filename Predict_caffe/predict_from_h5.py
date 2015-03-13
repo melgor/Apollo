@@ -28,8 +28,10 @@ class PredictionFromH5(object):
     data4DL = np.zeros([128,1,1,121])
     data4D[:,0,0,:] = input_features
     self.net.set_input_arrays(data4D.astype(np.float32),data4DL.astype(np.float32))
-    pred = net.forward()
-    return pred
+    pred = self.net.forward()
+    pred['fc2'].shape = (128,121)
+    predictions = pred['fc2']
+    return predictions
 
 
 
